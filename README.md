@@ -1,1 +1,1 @@
-# CC3501-Modelación-y-Computación-Gráfica
+# CC3501 Modelación y Computación Gráfica
