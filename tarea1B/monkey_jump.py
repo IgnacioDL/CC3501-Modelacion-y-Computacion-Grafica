@@ -17,8 +17,11 @@ if __name__ == '__main__':
         for row in csv_reader:
             stage[f'stage{stage_count}'] = row
             stage_count += 1
+        stage[f'stage{stage_count}'] = ['0', '0', '0']
+        stage[f'stage{stage_count + 1}'] = ['0', '0', '0']
+        stage[f'stage{stage_count + 2}'] = ['0', '0', '0']
         i = 4
-        sublist = stage[f'stage{i // 3}']
+        print(len(stage))
 
     # Initialize glfw
     if not glfw.init():
@@ -61,6 +64,7 @@ if __name__ == '__main__':
     # Creating Objects
     controller.create_monkey()
     controller.create_structure()
+    controller.set_max_stage(len(stage) - 4)
 
     # Setting useful variables
     list_stages = ["0" for i in range(12)]
@@ -77,9 +81,15 @@ if __name__ == '__main__':
 
         # Preparing structure
         stage_num = controller.get_stage()
+        if stage_num ==0:
+            pass
+        else:
+            stage_num -= 1
+
         for i in range(12):
             sublist = stage[f'stage{stage_num + i//3}']
             list_stages[i] = sublist[i % 3]
+
 
         # Using GLFW to check for input events
         glfw.poll_events()  # OBTIENE EL INPUT --> CONTROLADOR --> MODELOS
@@ -90,6 +100,7 @@ if __name__ == '__main__':
         # Drawing models
         controller.draw_structure(pipeline, list_stages)
         controller.draw_monkey(pipeline_texture)
+        controller.update_monkey(dt)
 
         # Once the render is done, buffers are swapped, showing only the complete scene.
         glfw.swap_buffers(window)

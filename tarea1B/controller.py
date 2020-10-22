@@ -25,6 +25,7 @@ class Controller(object):
         self.structure11 = None
         self.structure12 = None
         self.stage = 0
+        self.max_stage = 0
 
     def create_monkey(self):
         self.monkey = Monkey('monkey.png')
@@ -32,25 +33,39 @@ class Controller(object):
     def draw_monkey(self, pipeline):
         self.monkey.draw(pipeline)
 
+    def update_monkey(self, dt):
+        self.monkey.update(dt)
+        self.fall()
+        if self.stage > 1:
+            self.actualize_stage()
+        print(self.stage)
+
+    def fall(self):
+        if self.monkey.get_is_jumping():
+            return
+
     def set_stage(self, n):
         self.stage = n
 
     def get_stage(self):
         return self.stage
 
+    def set_max_stage(self, n):
+        self.max_stage = n
+
     def create_structure(self):
-        self.structure1 = Structure(-2/3, -1)
+        self.structure1 = Structure(-2 / 3, -1)
         self.structure2 = Structure(0, -1)
-        self.structure3 = Structure(2/3, -1)
-        self.structure4 = Structure(-2/3, -0.5)
+        self.structure3 = Structure(2 / 3, -1)
+        self.structure4 = Structure(-2 / 3, -0.5)
         self.structure5 = Structure(0, -0.5)
-        self.structure6 = Structure(2/3, -0.5)
-        self.structure7 = Structure(-2/3, 0)
+        self.structure6 = Structure(2 / 3, -0.5)
+        self.structure7 = Structure(-2 / 3, 0)
         self.structure8 = Structure(0, 0)
-        self.structure9 = Structure(2/3, 0)
-        self.structure10 = Structure(-2/3, 0.5)
+        self.structure9 = Structure(2 / 3, 0)
+        self.structure10 = Structure(-2 / 3, 0.5)
         self.structure11 = Structure(0, 0.5)
-        self.structure12 = Structure(2/3, 0.5)
+        self.structure12 = Structure(2 / 3, 0.5)
 
     def draw_structure(self, pipeline, list_stage):
         if list_stage[0] == "1":
@@ -85,15 +100,25 @@ class Controller(object):
         if key == glfw.KEY_ESCAPE:
             sys.exit()
 
-        # Controlador modifica al modelo
         elif key == glfw.KEY_LEFT and action == glfw.PRESS:
-            # print('Move left')
             self.monkey.move_left()
 
         elif key == glfw.KEY_RIGHT and action == glfw.PRESS:
-            # print('Move left')
             self.monkey.move_right()
 
-        # Raton toca la pantalla....
-        else:
-            print('Unknown key')
+        elif key == glfw.KEY_UP and action == glfw.PRESS:
+            self.monkey.jump()
+            self.monkey.set_is_jumping()
+            self.stage = min(self.stage + 1, self.max_stage)
+
+
+        elif key == glfw.KEY_DOWN and action == glfw.PRESS:
+            self.monkey.fall()
+            self.stage = max(0, self.stage - 1)
+
+        # else:
+        #    print('Unknown key')
+
+    def actualize_stage(self):
+        if not self.monkey.is_jumping:
+            self.monkey.actualize_down()
