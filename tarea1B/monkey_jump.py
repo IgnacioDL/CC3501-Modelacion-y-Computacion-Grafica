@@ -65,6 +65,7 @@ if __name__ == '__main__':
     controller.create_monkey()
     controller.create_structure()
     controller.set_max_stage(len(stage) - 4)
+    controller.set_dictionary(stage)
 
     # Setting useful variables
     list_stages = ["0" for i in range(12)]
@@ -81,7 +82,7 @@ if __name__ == '__main__':
 
         # Preparing structure
         stage_num = controller.get_stage()
-        if stage_num ==0:
+        if stage_num == 0:
             pass
         else:
             stage_num -= 1
@@ -89,7 +90,6 @@ if __name__ == '__main__':
         for i in range(12):
             sublist = stage[f'stage{stage_num + i//3}']
             list_stages[i] = sublist[i % 3]
-
 
         # Using GLFW to check for input events
         glfw.poll_events()  # OBTIENE EL INPUT --> CONTROLADOR --> MODELOS

@@ -50,6 +50,9 @@ class Monkey(object):
     def get_is_jumping(self):
         return self.is_jumping
 
+    def get_position_x(self):
+        return self.position_x
+
     def draw(self, pipeline_texture):
         glUseProgram(pipeline_texture.shaderProgram)
         sg.drawSceneGraphNode(self.model, pipeline_texture, 'transform')
@@ -63,14 +66,16 @@ class Monkey(object):
         self.aiming_x = min(self.aiming_x, 0.8)
 
     def jump(self):
-        if self.is_jumping or self.is_falling:
-            return
-        self.aiming_y += 0.5
-        self.aiming_y = min(0.5 + 0.1 + 0.2, self.aiming_y)
+        if self.is_jumping == False and self.is_falling == False:
+            self.is_jumping = True
+            self.aiming_y += 0.5
+            self.aiming_y = min(0.5 + 0.1 + 0.2, self.aiming_y)
 
     def fall(self):
-        self.aiming_y -= 0.5
-        self.aiming_y = max(-1 + 0.1 + 0.2, self.aiming_y)
+        if self.is_jumping == False and self.is_falling == False:
+            self.is_falling = True
+            self.aiming_y -= 0.5
+            self.aiming_y = max(-1 + 0.1 + 0.2, self.aiming_y)
 
     def update(self, dt):
 
@@ -98,6 +103,7 @@ class Monkey(object):
         if abs(self.position_y - self.aiming_y) < 0.01:
             self.position_y = self.aiming_y
             self.is_jumping = False
+            self.is_falling = False
         elif self.aiming_y > self.position_y:
             self.position_y += dy
             self.position_y = min(0.8, self.position_y)
@@ -108,7 +114,13 @@ class Monkey(object):
 
     def actualize_down(self):
         self.position_y -= 0.5
-        self.model.transform = tr.translate(self.position_y, self.position_y, 0)
+        self.aiming_y -= 0.5
+        self.model.transform = tr.translate(self.position_x, self.position_y, 0)
+
+    def actualize_up(self):
+        self.position_y += 0.5
+        self.aiming_y += 0.5
+        self.model.transform = tr.translate(self.position_x, self.position_y, 0)
 
 
 class Structure(object):

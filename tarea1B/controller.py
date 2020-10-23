@@ -26,6 +26,9 @@ class Controller(object):
         self.structure12 = None
         self.stage = 0
         self.max_stage = 0
+        self.need_actualize_down = False
+        self.need_actualize_up = False
+        self.dictionary = None
 
     def create_monkey(self):
         self.monkey = Monkey('monkey.png')
@@ -35,14 +38,20 @@ class Controller(object):
 
     def update_monkey(self, dt):
         self.monkey.update(dt)
-        self.fall()
-        if self.stage > 1:
-            self.actualize_stage()
+        if not self.is_standing():
+            print("averveververvvevrverevev")
+            self.stage = max(0, self.stage - 1)
+            self.monkey.fall()
+        if self.need_actualize_down:
+            self.actualize_stage_down()
+            self.need_actualize_down = False
+        elif self.need_actualize_up:
+            self.actualize_stage_up()
+            self.need_actualize_up = False
         print(self.stage)
 
-    def fall(self):
-        if self.monkey.get_is_jumping():
-            return
+    def set_dictionary(self, d):
+        self.dictionary = d
 
     def set_stage(self, n):
         self.stage = n
@@ -108,9 +117,10 @@ class Controller(object):
 
         elif key == glfw.KEY_UP and action == glfw.PRESS:
             self.monkey.jump()
-            self.monkey.set_is_jumping()
+            # self.monkey.set_is_jumping()
             self.stage = min(self.stage + 1, self.max_stage)
-
+            if self.stage > 1:
+                self.need_actualize_down = True
 
         elif key == glfw.KEY_DOWN and action == glfw.PRESS:
             self.monkey.fall()
@@ -119,6 +129,23 @@ class Controller(object):
         # else:
         #    print('Unknown key')
 
-    def actualize_stage(self):
-        if not self.monkey.is_jumping:
-            self.monkey.actualize_down()
+    def actualize_stage_down(self):
+        self.monkey.actualize_down()
+
+    def actualize_stage_up(self):
+        self.monkey.actualize_up()
+
+    def is_standing(self):
+        if self.monkey.get_is_jumping() == True or self.monkey.get_is_falling() == True:
+            return True
+        x = self.monkey.get_position_x()
+        if self.dictionary[f'stage{self.stage}'][0] == "1":
+            if x < -1 + 2 / 3:
+                return True
+        if self.dictionary[f'stage{self.stage}'][1] == "1":
+            if -1 + 2 / 3 < x < 1 / 3:
+                return True
+        if self.dictionary[f'stage{self.stage}'][2] == "1":
+            if x > 1 / 3:
+                return True
+        return False
