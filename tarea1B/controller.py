@@ -39,9 +39,10 @@ class Controller(object):
     def update_monkey(self, dt):
         self.monkey.update(dt)
         if not self.is_standing():
-            print("averveververvvevrverevev")
             self.stage = max(0, self.stage - 1)
             self.monkey.fall()
+            if self.stage > 0:
+                self.need_actualize_up = True
         if self.need_actualize_down:
             self.actualize_stage_down()
             self.need_actualize_down = False
@@ -116,6 +117,8 @@ class Controller(object):
             self.monkey.move_right()
 
         elif key == glfw.KEY_UP and action == glfw.PRESS:
+            if self.monkey.get_is_jumping() == True or self.monkey.get_is_falling() == True:
+                return
             self.monkey.jump()
             # self.monkey.set_is_jumping()
             self.stage = min(self.stage + 1, self.max_stage)
