@@ -10,14 +10,24 @@ from typing import List
 
 class Monkey(object):
 
-    def __init__(self, texture_monkey):
-        # gpu_body_quad = es.toGPUShape(bs.createColorQuad(1, 0.8, 0.8))
+    def __init__(self, texture_monkey, texture_monkey_jumping, texture_monkey_left, texture_monkey_right):
         gpu_monkey_texture = es.toGPUShape(bs.createTextureCube(texture_monkey), GL_REPEAT, GL_LINEAR)
+        gpu_monkey_texture_jumping = es.toGPUShape(bs.createTextureCube(texture_monkey_jumping), GL_REPEAT, GL_LINEAR)
+        gpu_monkey_texture_left = es.toGPUShape(bs.createTextureCube(texture_monkey_left), GL_REPEAT, GL_LINEAR)
+        gpu_monkey_texture_right = es.toGPUShape(bs.createTextureCube(texture_monkey_right), GL_REPEAT, GL_LINEAR)
 
+        # Saving textures
+        self.gpu_texture_monkey = gpu_monkey_texture
+        self.gpu_texture_jumping = gpu_monkey_texture_jumping
+        self.gpu_texture_left = gpu_monkey_texture_left
+        self.gpu_texture_right = gpu_monkey_texture_right
+
+        # Setting positions
         self.position_x = 0
         self.position_y = -1 + 0.1 + 0.2
         self.position_y_original = self.position_y
 
+        # Setting Graph
         body = sg.SceneGraphNode('body')
         body.transform = tr.uniformScale(1)
         body.childs += [gpu_monkey_texture]
@@ -30,12 +40,12 @@ class Monkey(object):
         transform_monkey = sg.SceneGraphNode('monkeyTR')
         transform_monkey.childs += [monkey]
 
+        # Setting other useful variables
         self.model = transform_monkey
         self.aiming_x = self.position_x
         self.aiming_y = self.position_y
         self.is_falling = False
         self.is_jumping = False
-        self.stage = 0
 
     def get_position_y_original(self):
         return self.position_y_original
@@ -56,8 +66,26 @@ class Monkey(object):
         return self.position_x
 
     def draw(self, pipeline_texture):
-        glUseProgram(pipeline_texture.shaderProgram)
-        sg.drawSceneGraphNode(self.model, pipeline_texture, 'transform')
+        if self.is_jumping or self.is_falling:
+            monkey_body = sg.findNode(self.model, "body")
+            monkey_body.childs = [self.gpu_texture_jumping]
+            glUseProgram(pipeline_texture.shaderProgram)
+            sg.drawSceneGraphNode(self.model, pipeline_texture, 'transform')
+        elif self.position_x > self.aiming_x:
+            monkey_body = sg.findNode(self.model, "body")
+            monkey_body.childs = [self.gpu_texture_left]
+            glUseProgram(pipeline_texture.shaderProgram)
+            sg.drawSceneGraphNode(self.model, pipeline_texture, 'transform')
+        elif self.position_x < self.aiming_x:
+            monkey_body = sg.findNode(self.model, "body")
+            monkey_body.childs = [self.gpu_texture_right]
+            glUseProgram(pipeline_texture.shaderProgram)
+            sg.drawSceneGraphNode(self.model, pipeline_texture, 'transform')
+        else:
+            monkey_body = sg.findNode(self.model, "body")
+            monkey_body.childs = [self.gpu_texture_monkey]
+            glUseProgram(pipeline_texture.shaderProgram)
+            sg.drawSceneGraphNode(self.model, pipeline_texture, 'transform')
 
     def move_left(self):
         self.aiming_x -= 0.25

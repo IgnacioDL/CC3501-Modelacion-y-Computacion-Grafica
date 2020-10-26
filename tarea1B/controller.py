@@ -40,7 +40,7 @@ class Controller(object):
         return self.game_over
 
     def create_monkey(self):
-        self.monkey = Monkey('monkey.png')
+        self.monkey = Monkey('monkey.png', 'monkey_jumping.png', 'monkey_left.png', 'monkey_right.png')
 
     def draw_monkey(self, pipeline):
         self.monkey.draw(pipeline)
@@ -60,8 +60,8 @@ class Controller(object):
         elif self.need_actualize_up:
             self.actualize_stage_up()
             self.need_actualize_up = False
-        self.lose()
-        self.victory()
+        #self.check_defeat()
+        #self.check_victory()
         print(self.stage)
 
     def set_dictionary(self, d):
@@ -184,10 +184,10 @@ class Controller(object):
                         return True
         return False
 
-    def lose(self):
+    def check_defeat(self):
         if self.started and self.stage == 0 and self.check_standing():
             self.game_over = True
 
-    def victory(self):
+    def check_victory(self):
         if self.stage == self.max_stage and self.check_standing():
             self.win = True

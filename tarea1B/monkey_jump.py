@@ -109,4 +109,7 @@ if __name__ == '__main__':
         # Once the render is done, buffers are swapped, showing only the complete scene.
         glfw.swap_buffers(window)
 
+        controller.check_defeat()
+        controller.check_victory()
+
     glfw.terminate()
