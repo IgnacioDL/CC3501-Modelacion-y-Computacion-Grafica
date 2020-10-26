@@ -29,6 +29,15 @@ class Controller(object):
         self.need_actualize_down = False
         self.need_actualize_up = False
         self.dictionary = None
+        self.started = False
+        self.game_over = False
+        self.win = False
+
+    def get_win(self):
+        return self.win
+
+    def get_game_over(self):
+        return self.game_over
 
     def create_monkey(self):
         self.monkey = Monkey('monkey.png')
@@ -38,6 +47,8 @@ class Controller(object):
 
     def update_monkey(self, dt):
         self.monkey.update(dt)
+        if self.stage > 0 and self.check_standing():
+            self.started = True
         if not self.is_standing():
             self.stage = max(0, self.stage - 1)
             self.monkey.fall()
@@ -49,13 +60,12 @@ class Controller(object):
         elif self.need_actualize_up:
             self.actualize_stage_up()
             self.need_actualize_up = False
+        self.lose()
+        self.victory()
         print(self.stage)
 
     def set_dictionary(self, d):
         self.dictionary = d
-
-    def set_stage(self, n):
-        self.stage = n
 
     def get_stage(self):
         return self.stage
@@ -117,17 +127,17 @@ class Controller(object):
             self.monkey.move_right()
 
         elif key == glfw.KEY_UP and action == glfw.PRESS:
-            if self.monkey.get_is_jumping() == True or self.monkey.get_is_falling() == True:
+            if self.monkey.get_is_jumping() or self.monkey.get_is_falling() \
+                    or self.stage == self.max_stage:
                 return
             self.monkey.jump()
-            # self.monkey.set_is_jumping()
             self.stage = min(self.stage + 1, self.max_stage)
             if self.stage > 1:
                 self.need_actualize_down = True
 
-        elif key == glfw.KEY_DOWN and action == glfw.PRESS:
-            self.monkey.fall()
-            self.stage = max(0, self.stage - 1)
+        # elif key == glfw.KEY_DOWN and action == glfw.PRESS:
+        #     self.monkey.fall()
+        #     self.stage = max(0, self.stage - 1)
 
         # else:
         #    print('Unknown key')
@@ -139,16 +149,45 @@ class Controller(object):
         self.monkey.actualize_up()
 
     def is_standing(self):
-        if self.monkey.get_is_jumping() == True or self.monkey.get_is_falling() == True:
+        if self.monkey.get_is_jumping() or self.monkey.get_is_falling() or self.stage == 0:
             return True
         x = self.monkey.get_position_x()
         if self.dictionary[f'stage{self.stage}'][0] == "1":
-            if x < -1 + 2 / 3:
+            if x < -1 + 2 / 3 + 0.05:
                 return True
         if self.dictionary[f'stage{self.stage}'][1] == "1":
             if -1 + 2 / 3 < x < 1 / 3:
                 return True
         if self.dictionary[f'stage{self.stage}'][2] == "1":
-            if x > 1 / 3:
+            if x > 1 / 3 - 0.05:
                 return True
         return False
+
+    def check_standing(self):
+        if not self.monkey.get_is_jumping() and not self.monkey.get_is_falling():
+            pos_x = self.monkey.get_position_x()
+            if self.stage == 0:
+                if self.monkey.get_position_y() == self.monkey.get_position_y_original():
+                    return True
+            elif self.stage == self.max_stage:
+                if self.monkey.get_position_y() == self.monkey.get_aiming_y():
+                    return True
+            else:
+                if self.dictionary[f'stage{self.stage}'][0] == "1":
+                    if pos_x < -1 + 2 / 3 + 0.05:
+                        return True
+                if self.dictionary[f'stage{self.stage}'][1] == "1":
+                    if -1 + 2 / 3 < pos_x < 1 / 3:
+                        return True
+                if self.dictionary[f'stage{self.stage}'][2] == "1":
+                    if pos_x > 1 / 3 - 0.05:
+                        return True
+        return False
+
+    def lose(self):
+        if self.started and self.stage == 0 and self.check_standing():
+            self.game_over = True
+
+    def victory(self):
+        if self.stage == self.max_stage and self.check_standing():
+            self.win = True

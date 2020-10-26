@@ -37,12 +37,14 @@ class Monkey(object):
         self.is_jumping = False
         self.stage = 0
 
-    def set_is_falling(self):
-        self.is_falling = True
+    def get_position_y_original(self):
+        return self.position_y_original
 
-    def set_is_jumping(self):
-        if self.position_y == self.aiming_y:
-            self.is_jumping = True
+    def get_position_y(self):
+        return self.position_y
+
+    def get_aiming_y(self):
+        return self.aiming_y
 
     def get_is_falling(self):
         return self.is_falling
@@ -66,13 +68,13 @@ class Monkey(object):
         self.aiming_x = min(self.aiming_x, 0.8)
 
     def jump(self):
-        if self.is_jumping == False and self.is_falling == False:
+        if not self.is_jumping and not self.is_falling:
             self.is_jumping = True
             self.aiming_y += 0.5
             self.aiming_y = min(0.5 + 0.1 + 0.2, self.aiming_y)
 
     def fall(self):
-        if self.is_jumping == False and self.is_falling == False:
+        if not self.is_jumping and not self.is_falling:
             self.is_falling = True
             self.aiming_y -= 0.5
             self.aiming_y = max(-1 + 0.1 + 0.2, self.aiming_y)

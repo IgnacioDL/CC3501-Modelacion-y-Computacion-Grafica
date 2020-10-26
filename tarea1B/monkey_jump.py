@@ -13,7 +13,7 @@ if __name__ == '__main__':
     with open('structure.csv') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         stage_count = 1
-        stage['stage0'] = ['1', '1', '1']
+        stage['stage0'] = ['0', '0', '0']
         for row in csv_reader:
             stage[f'stage{stage_count}'] = row
             stage_count += 1
@@ -73,23 +73,12 @@ if __name__ == '__main__':
     t0 = glfw.get_time()
     t1 = glfw.get_time()
 
-    while not glfw.window_should_close(window):  # Dibujando --> 1. obtener el input
+    while not glfw.window_should_close(window):  # Dibujando
 
         # Setting dt
         t1 = glfw.get_time()
         dt = t1 - t0
         t0 = glfw.get_time()
-
-        # Preparing structure
-        stage_num = controller.get_stage()
-        if stage_num == 0:
-            pass
-        else:
-            stage_num -= 1
-
-        for i in range(12):
-            sublist = stage[f'stage{stage_num + i//3}']
-            list_stages[i] = sublist[i % 3]
 
         # Using GLFW to check for input events
         glfw.poll_events()  # OBTIENE EL INPUT --> CONTROLADOR --> MODELOS
@@ -97,10 +86,25 @@ if __name__ == '__main__':
         # Clearing the screen in both, color and depth
         glClear(GL_COLOR_BUFFER_BIT)
 
-        # Drawing models
-        controller.draw_structure(pipeline, list_stages)
-        controller.draw_monkey(pipeline_texture)
-        controller.update_monkey(dt)
+        if not controller.get_win() and not controller.get_game_over():
+
+            # Preparing structure
+            stage_num = controller.get_stage()
+            if stage_num == 0:
+                pass
+            else:
+                stage_num -= 1
+
+            for i in range(12):
+                sublist = stage[f'stage{stage_num + i // 3}']
+                list_stages[i] = sublist[i % 3]
+
+            # Drawing models
+            controller.draw_structure(pipeline, list_stages)
+            controller.draw_monkey(pipeline_texture)
+            controller.update_monkey(dt)
+
+
 
         # Once the render is done, buffers are swapped, showing only the complete scene.
         glfw.swap_buffers(window)
