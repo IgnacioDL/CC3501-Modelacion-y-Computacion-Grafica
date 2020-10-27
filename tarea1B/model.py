@@ -153,9 +153,9 @@ class Monkey(object):
 
 class Structure(object):
 
-    def __init__(self, position_x, position_y):
-        gpu_structure = es.toGPUShape(bs.createColorQuad(0.8, 0.8, 0.8))
-        # gpu_structure = es.toGPUShape(bs.createTextureCube(texture), GL_REPEAT, GL_LINEAR)
+    def __init__(self, texture, position_x, position_y):
+        # gpu_structure = es.toGPUShape(bs.createColorQuad(0.8, 0.8, 0.8))
+        gpu_structure = es.toGPUShape(bs.createTextureCube(texture), GL_REPEAT, GL_LINEAR)
 
         structure = sg.SceneGraphNode('structure')
         width = 2 / 3

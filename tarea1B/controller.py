@@ -45,11 +45,11 @@ class Controller(object):
         self.scene_win = None
 
     def create_game_over(self):
-        self.scene_end_game = EndGame('game_over_0.png', 'game_over_1.png',  'game_over_2.png',
-                                      'game_over_3.png', 'game_over_4.png')
+        self.scene_end_game = EndGame('img/game_over_0.png', 'img/game_over_1.png',  'img/game_over_2.png',
+                                      'img/game_over_3.png', 'img/game_over_4.png')
 
     def create_win(self):
-        self.scene_win = EndGame('win_0.png', 'win_1.png', 'win_2.png', 'win_3.png', 'win_4.png')
+        self.scene_win = EndGame('img/win_0.png', 'img/win_1.png', 'img/win_2.png', 'img/win_3.png', 'img/win_4.png')
 
     def draw_game_over(self, pipeline, t):
         self.scene_end_game.draw(pipeline, t)
@@ -64,7 +64,7 @@ class Controller(object):
         return self.game_over
 
     def create_monkey(self):
-        self.monkey = Monkey('monkey.png', 'monkey_jumping.png', 'monkey_left.png', 'monkey_right.png')
+        self.monkey = Monkey('img/monkey.png', 'img/monkey_jumping.png', 'img/monkey_left.png', 'img/monkey_right.png')
 
     def draw_monkey(self, pipeline):
         self.monkey.draw(pipeline)
@@ -95,71 +95,71 @@ class Controller(object):
         self.max_stage = n
 
     def create_structure(self):
-        self.structure1 = Structure(-2 / 3, -1)
-        self.structure2 = Structure(0, -1)
-        self.structure3 = Structure(2 / 3, -1)
-        self.structure4 = Structure(-2 / 3, -0.5)
-        self.structure5 = Structure(0, -0.5)
-        self.structure6 = Structure(2 / 3, -0.5)
-        self.structure7 = Structure(-2 / 3, 0)
-        self.structure8 = Structure(0, 0)
-        self.structure9 = Structure(2 / 3, 0)
-        self.structure10 = Structure(-2 / 3, 0.5)
-        self.structure11 = Structure(0, 0.5)
-        self.structure12 = Structure(2 / 3, 0.5)
-        self.banana1 = Banana('banana.png', -2 / 3, -0.5)
-        self.banana2 = Banana('banana.png', 0, -0.5)
-        self.banana3 = Banana('banana.png', 2 / 3, -0.5)
-        self.banana4 = Banana('banana.png', -2 / 3, 0)
-        self.banana5 = Banana('banana.png', 0, 0)
-        self.banana6 = Banana('banana.png', 2 / 3, 0)
-        self.banana7 = Banana('banana.png', -2 / 3, 0.5)
-        self.banana8 = Banana('banana.png', 0, 0.5)
-        self.banana9 = Banana('banana.png', 2 / 3, 0.5)
+        self.structure1 = Structure('img/structure.png', -2 / 3, -1)
+        self.structure2 = Structure('img/structure.png', 0, -1)
+        self.structure3 = Structure('img/structure.png', 2 / 3, -1)
+        self.structure4 = Structure('img/structure.png', -2 / 3, -0.5)
+        self.structure5 = Structure('img/structure.png', 0, -0.5)
+        self.structure6 = Structure('img/structure.png', 2 / 3, -0.5)
+        self.structure7 = Structure('img/structure.png', -2 / 3, 0)
+        self.structure8 = Structure('img/structure.png', 0, 0)
+        self.structure9 = Structure('img/structure.png', 2 / 3, 0)
+        self.structure10 = Structure('img/structure.png', -2 / 3, 0.5)
+        self.structure11 = Structure('img/structure.png', 0, 0.5)
+        self.structure12 = Structure('img/structure.png', 2 / 3, 0.5)
+        self.banana1 = Banana('img/banana.png', -2 / 3, -0.5)
+        self.banana2 = Banana('img/banana.png', 0, -0.5)
+        self.banana3 = Banana('img/banana.png', 2 / 3, -0.5)
+        self.banana4 = Banana('img/banana.png', -2 / 3, 0)
+        self.banana5 = Banana('img/banana.png', 0, 0)
+        self.banana6 = Banana('img/banana.png', 2 / 3, 0)
+        self.banana7 = Banana('img/banana.png', -2 / 3, 0.5)
+        self.banana8 = Banana('img/banana.png', 0, 0.5)
+        self.banana9 = Banana('img/banana.png', 2 / 3, 0.5)
 
-    def draw_structure(self, pipeline, pipeline_texture, list_stage):
+    def draw_structure(self, pipeline_structure, pipeline_banana, list_stage):
         if list_stage[0] == "1":
-            self.structure1.draw(pipeline)
+            self.structure1.draw(pipeline_structure)
         if list_stage[1] == "1":
-            self.structure2.draw(pipeline)
+            self.structure2.draw(pipeline_structure)
         if list_stage[2] == "1":
-            self.structure3.draw(pipeline)
+            self.structure3.draw(pipeline_structure)
         if list_stage[3] == "1":
-            self.structure4.draw(pipeline)
+            self.structure4.draw(pipeline_structure)
             if self.stage == self.max_stage:
-                self.banana1.draw(pipeline_texture)
+                self.banana1.draw(pipeline_banana)
         if list_stage[4] == "1":
-            self.structure5.draw(pipeline)
+            self.structure5.draw(pipeline_structure)
             if self.stage == self.max_stage:
-                self.banana2.draw(pipeline_texture)
+                self.banana2.draw(pipeline_banana)
         if list_stage[5] == "1":
-            self.structure6.draw(pipeline)
+            self.structure6.draw(pipeline_structure)
             if self.stage == self.max_stage:
-                self.banana3.draw(pipeline_texture)
+                self.banana3.draw(pipeline_banana)
         if list_stage[6] == "1":
-            self.structure7.draw(pipeline)
+            self.structure7.draw(pipeline_structure)
             if self.stage == self.max_stage - 1:
-                self.banana4.draw(pipeline_texture)
+                self.banana4.draw(pipeline_banana)
         if list_stage[7] == "1":
-            self.structure8.draw(pipeline)
+            self.structure8.draw(pipeline_structure)
             if self.stage == self.max_stage - 1:
-                self.banana5.draw(pipeline_texture)
+                self.banana5.draw(pipeline_banana)
         if list_stage[8] == "1":
-            self.structure9.draw(pipeline)
+            self.structure9.draw(pipeline_structure)
             if self.stage == self.max_stage - 1:
-                self.banana6.draw(pipeline_texture)
+                self.banana6.draw(pipeline_banana)
         if list_stage[9] == "1":
-            self.structure10.draw(pipeline)
+            self.structure10.draw(pipeline_structure)
             if self.stage == self.max_stage - 2:
-                self.banana7.draw(pipeline_texture)
+                self.banana7.draw(pipeline_banana)
         if list_stage[10] == "1":
-            self.structure11.draw(pipeline)
+            self.structure11.draw(pipeline_structure)
             if self.stage == self.max_stage - 2:
-                self.banana8.draw(pipeline_texture)
+                self.banana8.draw(pipeline_banana)
         if list_stage[11] == "1":
-            self.structure12.draw(pipeline)
+            self.structure12.draw(pipeline_structure)
             if self.stage == self.max_stage - 2:
-                self.banana9.draw(pipeline_texture)
+                self.banana9.draw(pipeline_banana)
 
     def on_key(self, window, key, scancode, action, mods):
         if not (action == glfw.PRESS or action == glfw.RELEASE):
@@ -184,7 +184,6 @@ class Controller(object):
                 self.need_actualize_down = True
 
         elif key == glfw.KEY_KP_ENTER and action == glfw.PRESS:
-            print("htis is enter")
             if self.game_over or self.win:
                 self.monkey.restart()
                 self.stage = 0

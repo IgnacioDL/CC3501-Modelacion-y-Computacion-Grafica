@@ -20,7 +20,6 @@ if __name__ == '__main__':
         stage[f'stage{stage_count}'] = ['0', '0', '0']
         stage[f'stage{stage_count + 1}'] = ['0', '0', '0']
         i = 4
-        print(len(stage))
 
     # Initialize glfw
     if not glfw.init():
@@ -103,7 +102,7 @@ if __name__ == '__main__':
                 list_stages[i] = sublist[i % 3]
 
             # Drawing models
-            controller.draw_structure(pipeline, pipeline_texture, list_stages)
+            controller.draw_structure(pipeline_texture, pipeline_texture, list_stages)
             controller.draw_monkey(pipeline_texture)
             controller.update_monkey(dt)
             controller.check_defeat()
