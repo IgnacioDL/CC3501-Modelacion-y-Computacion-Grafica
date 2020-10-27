@@ -3,7 +3,7 @@ Clase controlador, obtiene el input, lo procesa, y manda los mensajes
 a los modelos.
 """
 
-from model import Monkey, Structure
+from model import Monkey, Structure, EndGame
 import glfw
 import sys
 
@@ -32,6 +32,21 @@ class Controller(object):
         self.started = False
         self.game_over = False
         self.win = False
+        self.scene_end_game = None
+        self.scene_win = None
+
+    def create_game_over(self):
+        self.scene_end_game = EndGame('game_over_0.png', 'game_over_1.png',  'game_over_2.png',
+                                      'game_over_3.png', 'game_over_4.png')
+
+    def create_win(self):
+        self.scene_win = EndGame('win_0.png', 'win_1.png', 'win_2.png', 'win_3.png', 'win_4.png')
+
+    def draw_game_over(self, pipeline, t):
+        self.scene_end_game.draw(pipeline, t)
+
+    def draw_win(self, pipeline, t):
+        self.scene_win.draw(pipeline, t)
 
     def get_win(self):
         return self.win
@@ -60,9 +75,9 @@ class Controller(object):
         elif self.need_actualize_up:
             self.actualize_stage_up()
             self.need_actualize_up = False
-        #self.check_defeat()
-        #self.check_victory()
-        print(self.stage)
+        # self.check_defeat()
+        # self.check_victory()
+        # print(self.win, self.game_over)
 
     def set_dictionary(self, d):
         self.dictionary = d
@@ -120,13 +135,13 @@ class Controller(object):
         if key == glfw.KEY_ESCAPE:
             sys.exit()
 
-        elif key == glfw.KEY_LEFT and action == glfw.PRESS:
+        elif key == glfw.KEY_A and action == glfw.PRESS:
             self.monkey.move_left()
 
-        elif key == glfw.KEY_RIGHT and action == glfw.PRESS:
+        elif key == glfw.KEY_D and action == glfw.PRESS:
             self.monkey.move_right()
 
-        elif key == glfw.KEY_UP and action == glfw.PRESS:
+        elif key == glfw.KEY_W and action == glfw.PRESS:
             if self.monkey.get_is_jumping() or self.monkey.get_is_falling() \
                     or self.stage == self.max_stage:
                 return
@@ -134,6 +149,17 @@ class Controller(object):
             self.stage = min(self.stage + 1, self.max_stage)
             if self.stage > 1:
                 self.need_actualize_down = True
+
+        elif key == glfw.KEY_KP_ENTER and action == glfw.PRESS:
+            print("htis is enter")
+            if self.game_over or self.win:
+                self.monkey.restart()
+                self.stage = 0
+                self.game_over = False
+                self.win = False
+                self.need_actualize_down = False
+                self.need_actualize_up = False
+                self.started = False
 
         # elif key == glfw.KEY_DOWN and action == glfw.PRESS:
         #     self.monkey.fall()

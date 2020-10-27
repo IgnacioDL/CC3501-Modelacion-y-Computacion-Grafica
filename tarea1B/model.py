@@ -26,6 +26,7 @@ class Monkey(object):
         self.position_x = 0
         self.position_y = -1 + 0.1 + 0.2
         self.position_y_original = self.position_y
+        self.position_x_original = self.position_x
 
         # Setting Graph
         body = sg.SceneGraphNode('body')
@@ -46,6 +47,17 @@ class Monkey(object):
         self.aiming_y = self.position_y
         self.is_falling = False
         self.is_jumping = False
+
+    def restart(self, ):
+        self.position_x = self.position_x_original
+        self.aiming_x = self.position_x
+        self.position_y = self.position_y_original
+        self.aiming_y = self.position_y
+        self.is_falling = False
+        self.is_jumping = False
+
+    def get_position_x_original(self):
+        return self.position_x_original
 
     def get_position_y_original(self):
         return self.position_y_original
@@ -181,3 +193,44 @@ class Structure(object):
         # v_0 = 2
         # a = 1
         self.pos_y -= 2 * dt + (1 / 2) * (dt ** 2)
+
+class EndGame(object):
+    def __init__(self, texture_1, texture_2, texture_3, texture_4, texture_5):
+        gpu_end_game_1 = es.toGPUShape(bs.createTextureCube(texture_1), GL_REPEAT, GL_LINEAR)
+        gpu_end_game_2 = es.toGPUShape(bs.createTextureCube(texture_2), GL_REPEAT, GL_LINEAR)
+        gpu_end_game_3 = es.toGPUShape(bs.createTextureCube(texture_3), GL_REPEAT, GL_LINEAR)
+        gpu_end_game_4 = es.toGPUShape(bs.createTextureCube(texture_4), GL_REPEAT, GL_LINEAR)
+        gpu_end_game_5 = es.toGPUShape(bs.createTextureCube(texture_5), GL_REPEAT, GL_LINEAR)
+
+        # Saving textures
+        self.texture_1 = gpu_end_game_1
+        self.texture_2 = gpu_end_game_2
+        self.texture_3 = gpu_end_game_3
+        self.texture_4 = gpu_end_game_4
+        self.texture_5 = gpu_end_game_5
+
+
+        # Setting Graph
+        scene = sg.SceneGraphNode('scene')
+        scene.transform = tr.uniformScale(2)
+        scene.childs += [gpu_end_game_1]
+
+        total_scene = sg.SceneGraphNode('total_scene')
+        total_scene.childs += [scene]
+
+        self.model = total_scene
+
+    def draw(self, pipeline_texture, t):
+        scene = sg.findNode(self.model, "scene")
+        if t < 0.2:
+            scene.childs = [self.texture_1]
+        elif 0.4 >= t >= 0.2:
+            scene.childs = [self.texture_2]
+        elif 0.6 >= t >= 0.4:
+            scene.childs = [self.texture_3]
+        elif 0.8 >= t >= 0.6:
+            scene.childs = [self.texture_4]
+        else:
+            scene.childs = [self.texture_5]
+        glUseProgram(pipeline_texture.shaderProgram)
+        sg.drawSceneGraphNode(self.model, pipeline_texture, 'transform')

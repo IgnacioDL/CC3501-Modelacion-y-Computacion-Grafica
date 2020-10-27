@@ -19,7 +19,6 @@ if __name__ == '__main__':
             stage_count += 1
         stage[f'stage{stage_count}'] = ['0', '0', '0']
         stage[f'stage{stage_count + 1}'] = ['0', '0', '0']
-        stage[f'stage{stage_count + 2}'] = ['0', '0', '0']
         i = 4
         print(len(stage))
 
@@ -64,14 +63,17 @@ if __name__ == '__main__':
     # Creating Objects
     controller.create_monkey()
     controller.create_structure()
-    controller.set_max_stage(len(stage) - 4)
+    controller.set_max_stage(len(stage) - 3)
     controller.set_dictionary(stage)
+    controller.create_game_over()
+    controller.create_win()
 
     # Setting useful variables
     list_stages = ["0" for i in range(12)]
 
     t0 = glfw.get_time()
     t1 = glfw.get_time()
+    ac_t = 0
 
     while not glfw.window_should_close(window):  # Dibujando
 
@@ -79,6 +81,7 @@ if __name__ == '__main__':
         t1 = glfw.get_time()
         dt = t1 - t0
         t0 = glfw.get_time()
+
 
         # Using GLFW to check for input events
         glfw.poll_events()  # OBTIENE EL INPUT --> CONTROLADOR --> MODELOS
@@ -103,13 +106,27 @@ if __name__ == '__main__':
             controller.draw_structure(pipeline, list_stages)
             controller.draw_monkey(pipeline_texture)
             controller.update_monkey(dt)
+            controller.check_defeat()
+            controller.check_victory()
+
+        elif controller.get_game_over():
+            ac_t += dt
+            if ac_t > 1:
+                ac_t = 0
+            controller.draw_game_over(pipeline_texture, ac_t)
+
+        elif controller.get_win():
+            ac_t += dt
+            if ac_t > 1:
+                ac_t = 0
+            controller.draw_win(pipeline_texture, ac_t)
+
 
 
 
         # Once the render is done, buffers are swapped, showing only the complete scene.
         glfw.swap_buffers(window)
 
-        controller.check_defeat()
-        controller.check_victory()
+
 
     glfw.terminate()
