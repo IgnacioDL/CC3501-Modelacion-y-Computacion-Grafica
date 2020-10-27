@@ -3,7 +3,7 @@ Clase controlador, obtiene el input, lo procesa, y manda los mensajes
 a los modelos.
 """
 
-from model import Monkey, Structure, EndGame
+from model import Monkey, Structure, EndGame, Banana
 import glfw
 import sys
 
@@ -24,6 +24,15 @@ class Controller(object):
         self.structure10 = None
         self.structure11 = None
         self.structure12 = None
+        self.banana1 = None
+        self.banana2 = None
+        self.banana3 = None
+        self.banana4 = None
+        self.banana5 = None
+        self.banana6 = None
+        self.banana7 = None
+        self.banana8 = None
+        self.banana9 = None
         self.stage = 0
         self.max_stage = 0
         self.need_actualize_down = False
@@ -75,9 +84,6 @@ class Controller(object):
         elif self.need_actualize_up:
             self.actualize_stage_up()
             self.need_actualize_up = False
-        # self.check_defeat()
-        # self.check_victory()
-        # print(self.win, self.game_over)
 
     def set_dictionary(self, d):
         self.dictionary = d
@@ -101,8 +107,17 @@ class Controller(object):
         self.structure10 = Structure(-2 / 3, 0.5)
         self.structure11 = Structure(0, 0.5)
         self.structure12 = Structure(2 / 3, 0.5)
+        self.banana1 = Banana('banana.png', -2 / 3, -0.5)
+        self.banana2 = Banana('banana.png', 0, -0.5)
+        self.banana3 = Banana('banana.png', 2 / 3, -0.5)
+        self.banana4 = Banana('banana.png', -2 / 3, 0)
+        self.banana5 = Banana('banana.png', 0, 0)
+        self.banana6 = Banana('banana.png', 2 / 3, 0)
+        self.banana7 = Banana('banana.png', -2 / 3, 0.5)
+        self.banana8 = Banana('banana.png', 0, 0.5)
+        self.banana9 = Banana('banana.png', 2 / 3, 0.5)
 
-    def draw_structure(self, pipeline, list_stage):
+    def draw_structure(self, pipeline, pipeline_texture, list_stage):
         if list_stage[0] == "1":
             self.structure1.draw(pipeline)
         if list_stage[1] == "1":
@@ -111,22 +126,40 @@ class Controller(object):
             self.structure3.draw(pipeline)
         if list_stage[3] == "1":
             self.structure4.draw(pipeline)
+            if self.stage == self.max_stage:
+                self.banana1.draw(pipeline_texture)
         if list_stage[4] == "1":
             self.structure5.draw(pipeline)
+            if self.stage == self.max_stage:
+                self.banana2.draw(pipeline_texture)
         if list_stage[5] == "1":
             self.structure6.draw(pipeline)
+            if self.stage == self.max_stage:
+                self.banana3.draw(pipeline_texture)
         if list_stage[6] == "1":
             self.structure7.draw(pipeline)
+            if self.stage == self.max_stage - 1:
+                self.banana4.draw(pipeline_texture)
         if list_stage[7] == "1":
             self.structure8.draw(pipeline)
+            if self.stage == self.max_stage - 1:
+                self.banana5.draw(pipeline_texture)
         if list_stage[8] == "1":
             self.structure9.draw(pipeline)
+            if self.stage == self.max_stage - 1:
+                self.banana6.draw(pipeline_texture)
         if list_stage[9] == "1":
             self.structure10.draw(pipeline)
+            if self.stage == self.max_stage - 2:
+                self.banana7.draw(pipeline_texture)
         if list_stage[10] == "1":
             self.structure11.draw(pipeline)
+            if self.stage == self.max_stage - 2:
+                self.banana8.draw(pipeline_texture)
         if list_stage[11] == "1":
             self.structure12.draw(pipeline)
+            if self.stage == self.max_stage - 2:
+                self.banana9.draw(pipeline_texture)
 
     def on_key(self, window, key, scancode, action, mods):
         if not (action == glfw.PRESS or action == glfw.RELEASE):

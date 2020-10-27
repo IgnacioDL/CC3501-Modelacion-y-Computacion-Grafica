@@ -103,7 +103,7 @@ if __name__ == '__main__':
                 list_stages[i] = sublist[i % 3]
 
             # Drawing models
-            controller.draw_structure(pipeline, list_stages)
+            controller.draw_structure(pipeline, pipeline_texture, list_stages)
             controller.draw_monkey(pipeline_texture)
             controller.update_monkey(dt)
             controller.check_defeat()
@@ -121,12 +121,7 @@ if __name__ == '__main__':
                 ac_t = 0
             controller.draw_win(pipeline_texture, ac_t)
 
-
-
-
         # Once the render is done, buffers are swapped, showing only the complete scene.
         glfw.swap_buffers(window)
-
-
 
     glfw.terminate()

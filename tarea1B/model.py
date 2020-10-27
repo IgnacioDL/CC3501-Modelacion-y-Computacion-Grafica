@@ -4,8 +4,6 @@ import scene_graph as sg
 import easy_shaders as es
 
 from OpenGL.GL import *
-import random
-from typing import List
 
 
 class Monkey(object):
@@ -78,26 +76,19 @@ class Monkey(object):
         return self.position_x
 
     def draw(self, pipeline_texture):
+        monkey_body = sg.findNode(self.model, "body")
+
         if self.is_jumping or self.is_falling:
-            monkey_body = sg.findNode(self.model, "body")
             monkey_body.childs = [self.gpu_texture_jumping]
-            glUseProgram(pipeline_texture.shaderProgram)
-            sg.drawSceneGraphNode(self.model, pipeline_texture, 'transform')
         elif self.position_x > self.aiming_x:
-            monkey_body = sg.findNode(self.model, "body")
             monkey_body.childs = [self.gpu_texture_left]
-            glUseProgram(pipeline_texture.shaderProgram)
-            sg.drawSceneGraphNode(self.model, pipeline_texture, 'transform')
         elif self.position_x < self.aiming_x:
-            monkey_body = sg.findNode(self.model, "body")
             monkey_body.childs = [self.gpu_texture_right]
-            glUseProgram(pipeline_texture.shaderProgram)
-            sg.drawSceneGraphNode(self.model, pipeline_texture, 'transform')
         else:
-            monkey_body = sg.findNode(self.model, "body")
             monkey_body.childs = [self.gpu_texture_monkey]
-            glUseProgram(pipeline_texture.shaderProgram)
-            sg.drawSceneGraphNode(self.model, pipeline_texture, 'transform')
+
+        glUseProgram(pipeline_texture.shaderProgram)
+        sg.drawSceneGraphNode(self.model, pipeline_texture, 'transform')
 
     def move_left(self):
         self.aiming_x -= 0.25
@@ -135,13 +126,6 @@ class Monkey(object):
             self.position_x = max(-0.8, self.position_x)
 
         # Actualizing position in y
-        # if self.position_y > 0 and self.aiming_y > 0 and self.aiming_y - self.position_y < 0.0001:
-        #    self.position_y = self.aiming_y
-        # elif self.position_y < 0 and self.aiming_y - self.position_y < 0.0001:
-        #    self.position_y = self.aiming_y
-        # elif self.aiming_y > self.position_y:
-        #    self.position_y += dy
-        #    self.position_y = min(0.8, self.position_y)
         if abs(self.position_y - self.aiming_y) < 0.01:
             self.position_y = self.aiming_y
             self.is_jumping = False
@@ -152,6 +136,8 @@ class Monkey(object):
         elif self.aiming_y < self.position_y:
             self.position_y -= dy
             self.position_y = max(-0.8, self.position_y)
+
+        # Transforming model
         self.model.transform = tr.translate(self.position_x, self.position_y - self.position_y_original, 0)
 
     def actualize_down(self):
@@ -169,6 +155,7 @@ class Structure(object):
 
     def __init__(self, position_x, position_y):
         gpu_structure = es.toGPUShape(bs.createColorQuad(0.8, 0.8, 0.8))
+        # gpu_structure = es.toGPUShape(bs.createTextureCube(texture), GL_REPEAT, GL_LINEAR)
 
         structure = sg.SceneGraphNode('structure')
         width = 2 / 3
@@ -188,11 +175,6 @@ class Structure(object):
         self.model.transform = tr.translate(self.pos_x, self.pos_y, 0)
         sg.drawSceneGraphNode(self.model, pipeline, "transform")
 
-    def update(self, dt):
-        # y_0 = 0
-        # v_0 = 2
-        # a = 1
-        self.pos_y -= 2 * dt + (1 / 2) * (dt ** 2)
 
 class EndGame(object):
     def __init__(self, texture_1, texture_2, texture_3, texture_4, texture_5):
@@ -208,7 +190,6 @@ class EndGame(object):
         self.texture_3 = gpu_end_game_3
         self.texture_4 = gpu_end_game_4
         self.texture_5 = gpu_end_game_5
-
 
         # Setting Graph
         scene = sg.SceneGraphNode('scene')
@@ -234,3 +215,27 @@ class EndGame(object):
             scene.childs = [self.texture_5]
         glUseProgram(pipeline_texture.shaderProgram)
         sg.drawSceneGraphNode(self.model, pipeline_texture, 'transform')
+
+
+class Banana(object):
+
+    def __init__(self, texture, position_x, position_y):
+        gpu_banana = es.toGPUShape(bs.createTextureCube(texture), GL_REPEAT, GL_LINEAR)
+
+        banana = sg.SceneGraphNode('banana')
+        width = 2 / 3
+        length = 0.3
+        banana.transform = tr.scale(width, length, 1)
+        banana.childs += [gpu_banana]
+
+        banana_tr = sg.SceneGraphNode('bananaTR')
+        banana_tr.childs += [banana]
+
+        self.pos_y = position_y + 0.05 + 0.17  # -1, -0.5, 0, 0.5 / + 0.5 +0.1
+        self.pos_x = position_x  # -2/3, 0, 2/3
+        self.model = banana_tr
+
+    def draw(self, pipeline):
+        glUseProgram(pipeline.shaderProgram)
+        self.model.transform = tr.translate(self.pos_x, self.pos_y, 0)
+        sg.drawSceneGraphNode(self.model, pipeline, "transform")
